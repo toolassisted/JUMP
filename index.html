@@ -653,7 +653,7 @@ function UCJUMP(data) {
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
-  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == 0; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T";}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW);
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == 0; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T"}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW);
   JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
 }
 
@@ -678,7 +678,7 @@ function UCSTAND(data) {
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
-  var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr").classed("UC0",function(d){return d.m=="5T";}).on("mouseenter",STANDVIEW).on("click",STANDVIEW);
+  var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr").classed("UC0",function(d){return d.m=="5S" || d.m.endsWith("LP");}).on("mouseenter",STANDVIEW).on("click",STANDVIEW);
   TR.selectAll("td").data(STANDROW).enter().append("td").text(function(d,i){ return d; });
 }
 
