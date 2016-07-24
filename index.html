@@ -434,7 +434,7 @@
 <div id="JUMPZIP">
 <table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>9 MB</td><td>LOADING...</td></tr></tbody></table>
 <br/>
-<table class="FRAMES"><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>LOL</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -492,6 +492,13 @@ var G1 = d3.select("#G1");
 var GG1 = d3.select("#GG1");
 var I1 = 25;
 var I2 = 25;
+
+function TOGGLESTAGE() {  
+  var t1 = VIEW.selectAll("div")._groups[0][0];
+  var t2 = VIEW.selectAll("div")._groups[0][1];
+  var t0 = t1.parentNode;
+  t0.insertBefore(t2,t1);
+}
 
 function JUMPROW(d,i) {return [d.p+1,d.m,d.md,d.m2];}
 function STANDROW(d,i) {
@@ -686,7 +693,12 @@ function UCSTAND(data) {
   JSON.parse(data).forEach(function(d,i){
     if (MOVES[d.p][d.f[3].s] === undefined) {
       MOVES[d.p][d.f[3].s] = 1;
-      if (d.p==1) JUMPS[2].push(d);
+      if (d.p==1) {
+        d.f.forEach(function(f){
+          f.c5 = f.c5.filter(function(c){return c.t!=4&&c.t!=3;})
+        });
+        JUMPS[2].push(d);
+      }
     } else {
       MOVES[d.p][d.f[3].s]++;
     }
