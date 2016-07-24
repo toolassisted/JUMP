@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SFV JUMP LOL</title>
+<style>
+
+  body {
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    /*margin-bottom: 500px;*/
+    width: 2500px;
+  }
+
+  line {
+    stroke-width: 1px;
+    stroke: #999;
+    fill: #ddd;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  rect {
+    stroke-width: 1px;
+    stroke: #999;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+
+  #STAGE rect.HURT {
+    opacity: 0.2;
+  }
+
+  rect.HURT {
+    stroke-width: 1px;
+    stroke: #090;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    mix-blend-mode: screen;
+  }
+
+
+  rect.HIT {
+    stroke-width: 1px;
+    stroke: #900;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    mix-blend-mode: screen;
+  }
+
+  path {
+    stroke-width: 1px;
+    stroke: #333;
+    fill: #ddd;
+    vector-effect: non-scaling-stroke;
+  }
+
+  a {
+    color: #0079d3;
+  }
+
+  .GRID line {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .REPLAY line {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .UNOC { display: none; }
+
+  .fred { fill: #c00 !important; }
+
+  .gray { stroke: #333; }
+  .red { stroke: #f00; }
+  .green { stroke: #0f0; }
+  .blue { stroke: #00f; }
+  .cyan { stroke: #0ff; }
+  .yellow { stroke: #ff0; }
+
+  .p1gray { stroke: #333; }
+  .p1red { stroke: #f00; }
+  .p1green { stroke: #0f0; }
+  .p1blue { stroke: #00f; }
+  .p1hit { stroke: #c6f; }
+  .p1cyan { stroke: #0ff; }
+  .p1yellow { stroke: #ff0; }
+
+  .p2gray { stroke: #333; }
+  .p2red { stroke: #f66; }
+  .p2green { stroke: #6f6; }
+  .p2blue { stroke: #66f; }
+  .p2hit { stroke: #c6f; }
+  .p2cyan { stroke: #6ff; }
+
+  .hitbox { color: #f99; }
+  .hit { color: #969; }
+  .first { color: #cfc; background-color: #363;}
+  .iasa1 { color: #999;}
+
+  #REPLAYS {
+    text-align: center;
+    /*display: inline-block;*/
+  }
+
+  #REPLAYS  !svg + div {
+    /*display: inline-block;*/
+  }
+
+  #REPLAYS div {
+    height: 500px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: inline-block;
+    padding-right: 2em;
+  }
+
+  #LINKS {
+    /*height: 500px;*/
+    white-space: nowrap;
+    overflow: auto;
+  }
+
+  #FRAMES, #KD, #TOTALS {
+    white-space: nowrap;
+    /*height: 500px;*/
+    /*overflow-x: hidden;*/
+    /*overflow-y: auto;*/
+    /*display: inline-block;*/
+    /*padding-right: 2em;*/
+  }
+
+  #FRAMES div {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  table.FRAMES {
+    table-layout: fixed;
+    font: 10px sans-serif;
+    text-align: center;
+    color: #ccc;
+  }
+
+  table.FRAMES thead tr {
+    background-color: #030; 
+  }
+
+  table.FRAMES tbody tr:nth-child(even) {
+    background-color: #333; 
+  }
+
+  table.FRAMES tbody tr:nth-child(odd) {
+    background-color: #111;
+  }
+
+ table.FRAMES tbody tr td:nth-child(3) {
+    color: #9cc;
+  }
+ table.FRAMES tbody tr td:nth-child(4) {
+    color: #c99;
+  }
+  table.FRAMES td {
+    white-space: nowrap;
+    padding: 2px;
+  }
+
+  table.FRAMES th {
+    white-space: nowrap;
+    padding: 2px;
+    cursor: s-resize;
+  }
+  
+  table.FRAMES tbody tr.UC {
+    background-color: #060;
+  }
+
+  table.FRAMES tbody tr:nth-child(even) td.UC0 {  
+    background-color: #050;
+  }
+  table.FRAMES tbody tr:nth-child(odd) td.UC0 {
+    background-color: #030;
+  }
+
+  table.FRAMES tbody tr.UC0 {  
+    background-color: #030;
+  }
+
+  table.FRAMES tbody tr:hover {
+    background-color: #060;
+  }
+
+  #LINKS div.COL {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  #LINKS div.COL div {
+    text-align: left;
+    padding: 10px;
+  }
+
+  #LINKS button {
+    background-color: #ccc;
+    padding: 10px 10px;
+  }
+
+  svg {
+    /*border: 1px solid #111;*/
+    /*margin-top: 10px;*/
+  }
+
+  .REPLAY rect {
+    stroke-width: 1px;
+    /*stroke: #333;*/
+    fill: none;
+    /*opacity: 0.8;*/
+    mix-blend-mode: screen;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .REPLAY rect.clip {
+    fill: #330;
+  }
+
+  .REPLAY text {
+    text-anchor: middle;
+    fill: #999;
+    font: 8px sans-serif;
+  }
+
+  .rects text {
+    text-anchor: middle;
+    fill: #999;
+    font: 10px sans-serif;
+  }
+
+  .axis {
+    font: 10px sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  .axis text {
+    fill: #ddd;
+  }
+
+  .axis .domain {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .3;
+    stroke-width: 10px;
+    stroke-linecap: round;
+  }
+
+  .axis .halo {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 8px;
+    stroke-linecap: round;
+  }
+
+  .slider .handle {
+    fill: #fff;
+    fill-opacity: .75;
+    stroke: #000;
+    stroke-opacity: .5;
+    stroke-width: 1.25px;
+    cursor: crosshair;
+  }
+
+  #OKI > span.GRID {
+    color: #ccc;
+  }
+
+  .GRID > span:nth-child(10n) {
+    color: #eee;
+  }
+
+
+  .GRID > span.ACTIVE {
+    color: #fcc;
+  }
+
+  .GRID > span.STARTUP {
+    color: #aaa;
+  }
+
+  .GRID > span.RECOVERY {
+    color: #aaa;
+  }
+
+  .GRID > span.WAKEUP {
+    color: #cfc;
+  }
+
+  .GRID > span.FK {
+    color: #ccc;
+  }
+
+
+  .UCLICK:hover {
+    color: #fff;
+    background-color: #990;
+    cursor: pointer;
+  }
+
+  button.CHAR {
+    padding: 5px;
+    margin: 3px;
+    /*width: 8%;*/
+    background-color: #999;
+  }
+
+  button.SEL {
+    background-color: #ffc;
+  }
+
+  #OKI {    
+    cursor: pointer;
+  }
+
+  .CMD {
+    color: #999;
+  }
+
+  .UCY1 {    
+    background-color: #033;
+  }
+
+  .UCY2 {    
+    background-color: #033;
+  }
+
+  .UCY3 {    
+    background-color: #220;
+  }
+
+  .UCY4 {    
+    background-color: #220;
+  }
+
+  .UCY5 {    
+    background-color: #220;
+  }
+
+  .UCY6 {    
+    background-color: #220;
+  }
+
+  .UCY7 {    
+    background-color: #220;
+  }
+
+
+  .UCOKI {
+    background-color: #020;
+  }
+
+  #FRAMEKILLS {
+    line-height: 1.5em;
+  }
+
+  .FRAMEKILL {
+    color: #999;
+  }
+
+  button.CHARRESET {
+    margin-left: 50px;
+  }
+
+  #JUMPJUMP, #JUMP, #STAND, #JUMPZIP, #STANDZIP {
+    display: inline-block;
+    max-height: 95vh;
+    /*overflow-y: scroll;*/
+    vertical-align: top;
+
+  } 
+
+  #FRAMES, #FRAMES2 {    
+    display: inline-block;
+    max-height: 95vh;
+    /*overflow-y: scroll;*/
+    vertical-align: top;
+    /*text-align: right;*/
+    /*position: fixed;*/
+    /*width: 99%;*/
+    /*z-index: -100;*/
+  }
+
+  #VIEW, #MAIN {
+    display: inline-block;
+    /*max-height: 95vh;*/
+    overflow-y: auto;
+    overflow-x: hidden;
+    vertical-align: top;
+    /*text-align: right;*/
+    /*position: fixed;*/
+    /*width: 99%;*/
+    /*z-index: -100;*/
+    white-space: nowrap;
+    /*width: 1000px;*/
+  }
+
+</style>
+
+</head>
+<body>
+<div id="JUMPZIP">
+<table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>9 MB</td><td>LOADING...</td></tr></tbody></table>
+<br/>
+<table class="FRAMES"><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr></tbody></table>
+</div>
+<div id="JUMPJUMP"></div>
+<div id="JUMP"></div>
+<div id="FRAMES"><table class="FRAMES"><thead><tr><th>#</th><th>SCRIPT</th><th>X1</th><th>X2</th><th>X3</th></tr></thead><tbody></tbody></table></div>
+<div id="MAIN">
+<div id="VIEW">
+<div><svg id="STAGE" width="640" height="500"><g id="G00"><g id="G0" transform="translate(320 500)scale(100)"><g id="G"></g><g id="GG"></g><line x1="-2" y1="0" x2="+2" y2="0"></line></g></g></svg></div>
+<div><svg id="STAGE1" width="640" height="500"><g id="GG00"><g id="GG0" transform="translate(320 500)scale(100)"><g id="G1"></g><g id="GG1"></g><line x1="-2" y1="0" x2="+2" y2="0"></line></g></g></svg></div>
+<div></div></div>
+</div>
+<div id="STANDZIP"><table class="FRAMES"><thead><tr><th>#</th><th>STAND</th></tr></thead><tbody><tr><td>4 MB</td><td>LOADING...</td></tr></tbody></table></div>
+<div id="STAND"></div>
+<div id="FRAMES2"><table class="FRAMES"><thead><tr><th>#</th><th>SCRIPT</th><th>X1</th><th>X2</th><th>X3</th></tr></thead><tbody></tbody></table></div>
+<script src="d3.v4.min.js"></script>
+<script src="jszip.min.js"></script>
+<script type="text/javascript" src="jszip-utils.min.js"></script>
+<!--[if IE]>
+<script type="text/javascript" src="jszip-utils-ie.min.js"></script>
+<![endif]-->
+<script>
+var zoom = d3.zoom()
+    .scaleExtent([1, 2])
+    .translateExtent([[0,0],[640,500]])
+    .on("zoom", zoomed);
+
+var zoom1 = d3.zoom()
+    .scaleExtent([1, 2])
+    .translateExtent([[0,0],[640,500]])
+    .on("zoom", zoomed1);
+
+function zoomed() {
+  d3.select("#G00").attr("transform", d3.event.transform);
+}
+
+function zoomed1() {
+  d3.select("#GG00").attr("transform", d3.event.transform);
+}
+
+// d3.select("#STAGE").call(zoom);
+d3.select("#STAGE1").call(zoom1);
+var JUMPZIP = d3.select("#JUMPZIP");
+var STANDZIP = d3.select("#STANDZIP");
+var JUMPJUMP = d3.select("#JUMPJUMP");
+var JUMP = d3.select("#JUMP");
+var STAND = d3.select("#STAND");
+var JUMPS = [{},{},{}];
+var FRAMES = d3.select("#FRAMES");
+var FRAMES2 = d3.select("#FRAMES2");
+var VIEW = d3.select("#VIEW");
+var STAGE = d3.select("#STAGE");
+var STAGE1 = d3.select("#STAGE1");
+var G = d3.select("#G");
+var GG = d3.select("#GG");
+var G1 = d3.select("#G1");
+var GG1 = d3.select("#GG1");
+var I1 = 25;
+var I2 = 25;
+
+function JUMPROW(d,i) {return [d.p+1,d.m,d.md,d.m2];}
+function STANDROW(d,i) {
+  var START = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; })-1;
+  var IASA = d.f.findIndex(function(ff,ii){ return ff.sf==ff.s1; })-1;
+  return [d.p+1,d.m, START == -2 ? "-" : START, IASA == -2 ? "-" : IASA];
+}
+
+function JUMPJUMPVIEW(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+
+  var TB = FRAMES.select("table").select("tbody");
+  TB.selectAll("tr").remove();
+  var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
+  TR.selectAll("td")
+      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .enter().append("td")
+      .classed("hitbox",function(dd,ii){
+        return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
+      })
+      .text(function(d,i){ return d; });
+  G.selectAll("*").remove();  
+  G1.selectAll("*").remove();
+  d.f.forEach(JUMPSTAGE);
+
+
+  JUMP.selectAll("*").remove();
+  var TABLE = JUMP.append("table").classed("FRAMES",true);
+  var THEAD = TABLE.append("thead").append("tr");
+  var JJTB = TABLE.append("tbody");
+  var TH = ["SIDE", // "CHAR",
+            "JUMP", "WAIT", "MOVE" //, "FRAMES"
+            ];
+
+  THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.p == d.p && dd.m == d.m && dd.m2 == d.m2})).enter().append("tr").on("mouseenter",JUMPVIEW).on("click",JUMPVIEW).classed("UC",function(dd,ii){return dd.p == d.p && dd.md == d.md; ;});
+  JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
+}
+
+function JUMPVIEW(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+
+  var TB = FRAMES.select("table").select("tbody");
+  TB.selectAll("tr").remove();
+  var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
+  TR.selectAll("td")
+      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .enter().append("td")
+      .classed("hitbox",function(dd,ii){
+        return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
+      })
+      .text(function(d,i){ return d; });
+  G.selectAll("*").remove();  
+  G1.selectAll("*").remove();
+  d.f.forEach(JUMPSTAGE);
+
+
+  JUMPJUMP.selectAll("*").remove();
+  var TABLE = JUMPJUMP.append("table").classed("FRAMES",true);
+  var THEAD = TABLE.append("thead").append("tr");
+  var JJTB = TABLE.append("tbody");
+  var TH = ["SIDE", // "CHAR",
+            "JUMP", "WAIT", "MOVE" //, "FRAMES"
+            ];
+
+  THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == d.md; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T";}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW).classed("UC",function(dd,ii){ return dd.p == d.p && dd.m == d.m && dd.m2 == d.m2; });
+  JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
+
+}
+function JUMPSTAGE(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  
+  d.c6.forEach(function(c){
+    G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+  });
+
+  d.c5.forEach(function(c){
+    G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+  });
+
+  if (//i == 0 || 
+    i == I1 
+    //|| d.s == "STAND" && d.sf == 0
+    ) JUMPSTAGE1(d);
+}
+function JUMPSTAGE1(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  if (i!=null) { I1 = i; G1.selectAll("*").remove(); }
+
+  d.c6.forEach(function(c){
+    G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+  });
+
+  d.c5.forEach(function(c){
+    G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+  });
+
+  if (i==null) return;
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+}
+
+
+function STANDVIEW(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+
+  var hi = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; });
+  if (hi>-1) I2 = hi;
+
+  var TB = FRAMES2.select("table").select("tbody");
+  TB.selectAll("tr").remove();
+  var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",STANDSTAGE1).on("click",STANDSTAGE1).classed("UC",function(dd,ii){return ii==I2;});
+  TR.selectAll("td")
+      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1) + (d.sf==d.s1?" IASA":d.sf>d.s1?" +":""),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .enter().append("td")
+      .classed("hitbox",function(dd,ii){
+        return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
+      })
+      .classed("iasa1",function(dd,ii){
+        return ii==1 && dd.endsWith(" +"); 
+      })
+      .text(function(d,i){ return d; });
+  GG.selectAll("*").remove();  
+  GG1.selectAll("*").remove();
+  d.f.forEach(STANDSTAGE);
+
+}
+function STANDSTAGE(d,i) {
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  d.c6.forEach(function(c){
+    GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+  });
+
+  d.c5.forEach(function(c){
+    GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+  });
+
+  if (//i == 0 || 
+    i == I2 
+    //|| d.s == "STAND" && d.sf == 0
+    ) STANDSTAGE1(d);
+}
+function STANDSTAGE1(d,i) {  
+  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  if (i!=null) { I2 = i; GG1.selectAll("*").remove(); }
+
+  d.c6.forEach(function(c){
+    GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+  });
+
+  d.c5.forEach(function(c){
+    GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+  });
+
+  if (i==null) return;
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+}
+
+function UCJUMP(data) {
+  JUMPS[1] = JSON.parse(data);
+
+  JUMPJUMP.selectAll("*").remove();
+  var TABLE = JUMPJUMP.append("table").classed("FRAMES",true);
+  var THEAD = TABLE.append("thead").append("tr");
+  var JJTB = TABLE.append("tbody");
+  var TH = ["SIDE", // "CHAR",
+            "JUMP", "WAIT", "MOVE" //, "FRAMES"
+            ];
+
+  THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == 0; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T";}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW);
+  JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
+}
+
+function UCSTAND(data) {
+  var MOVES = [[],[]];
+  JUMPS[2] = [];
+  JSON.parse(data).forEach(function(d,i){
+    if (MOVES[d.p][d.f[3].s] === undefined) {
+      MOVES[d.p][d.f[3].s] = 1;
+      if (d.p==1) JUMPS[2].push(d);
+    } else {
+      MOVES[d.p][d.f[3].s]++;
+    }
+
+  });
+
+  var TABLE = STAND.append("table").classed("FRAMES",true);
+  var THEAD = TABLE.append("thead").append("tr");
+  var TB = TABLE.append("tbody");
+  var TH = ["SIDE", // "CHAR",
+            "STAND", "START", "IASA" //, "FRAMES"
+            ];
+
+  THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
+  var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr").classed("UC0",function(d){return d.m=="5T";}).on("mouseenter",STANDVIEW).on("click",STANDVIEW);
+  TR.selectAll("td").data(STANDROW).enter().append("td").text(function(d,i){ return d; });
+}
+
+
+function UCJUMPZIP(d,i) { 
+  JUMPJUMP.selectAll("*").remove();
+  JUMP.selectAll("*").remove();
+  FRAMES.select("table").select("tbody").selectAll("tr").remove();
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+  ZIP.file(d).async("string").then(UCJUMP);
+}
+
+function UCSTANDZIP(d,i) {
+  STAND.selectAll("*").remove();
+  FRAMES2.select("table").select("tbody").selectAll("tr").remove();
+  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this).classed("UC",true);
+  ZIP1.file(d).async("string").then(UCSTAND);
+}
+
+var ZIP = new JSZip();
+var ZIP1 = new JSZip();
+
+JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
+    if(err) { throw err; }
+    ZIP1.loadAsync(data).then(function () {      
+      var TB = STANDZIP.select("table").select("tbody");
+      TB.selectAll("tr").remove();      
+      var TR = TB.selectAll("tr").data(Object.keys(ZIP1.files)).enter().append("tr").on("click",UCSTANDZIP);
+      TR.selectAll("td").data(function(d,i){ return [i+1,d.split("_")[1]]; }).enter().append("td").text(function(d,i){ return d; });
+
+      // ZIP1.file("LOL_BSN_BSN.json").async("string").then(UCSTAND);
+    });
+});
+
+JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
+    if(err) { throw err; }
+    ZIP.loadAsync(data).then(function () {
+      var TB = JUMPZIP.select("table").select("tbody");
+      TB.selectAll("tr").remove();
+      var TR = TB.selectAll("tr").data(Object.keys(ZIP.files)).enter().append("tr").on("click",UCJUMPZIP);
+      TR.selectAll("td").data(function(d,i){ return [i+1,d.split(".")[0]]; }).enter().append("td").text(function(d,i){ return d; });
+
+      // ZIP.file("JUMP_RYU.json").async("string").then(UCJUMP);
+    });
+});
+
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-72771119-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
