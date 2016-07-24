@@ -32,6 +32,14 @@
     opacity: 0.2;
   }
 
+  #STAGE rect.GRAB {
+    opacity: 0.2;
+  }
+
+  #STAGE rect.PROJINV {
+    opacity: 0.2;
+  }
+
   rect.HURT {
     stroke-width: 1px;
     stroke: #090;
@@ -40,6 +48,21 @@
     mix-blend-mode: screen;
   }
 
+  rect.PROJINV {
+    stroke-width: 1px;
+    stroke: #960;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    mix-blend-mode: screen;
+  }
+
+  rect.GRAB {
+    stroke-width: 1px;
+    stroke: #009;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    mix-blend-mode: screen;
+  }
 
   rect.HIT {
     stroke-width: 1px;
@@ -549,11 +572,11 @@ function JUMPSTAGE(d,i) {
   if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
   
   d.c6.forEach(function(c){
-    G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+    G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
   });
 
   d.c5.forEach(function(c){
-    G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+    if (c.t != 3 && c.t !=4) G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
   });
 
   if (//i == 0 || 
@@ -567,11 +590,11 @@ function JUMPSTAGE1(d,i) {
   if (i!=null) { I1 = i; G1.selectAll("*").remove(); }
 
   d.c6.forEach(function(c){
-    G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+    G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
   });
 
   d.c5.forEach(function(c){
-    G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+    if (c.t != 3 && c.t !=4) G1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
   });
 
   if (i==null) return;
@@ -611,11 +634,11 @@ function STANDSTAGE(d,i) {
   if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
 
   d.c6.forEach(function(c){
-    GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+    GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
   });
 
   d.c5.forEach(function(c){
-    GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+    if (c.t != 3 && c.t !=4) GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
   });
 
   if (//i == 0 || 
@@ -629,11 +652,11 @@ function STANDSTAGE1(d,i) {
   if (i!=null) { I2 = i; GG1.selectAll("*").remove(); }
 
   d.c6.forEach(function(c){
-    GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HURT",true);
+    GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
   });
 
   d.c5.forEach(function(c){
-    GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
+    if (c.t != 3 && c.t !=4) GG1.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed("HIT",true);
   });
 
   if (i==null) return;
