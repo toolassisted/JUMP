@@ -718,13 +718,18 @@ function UCSTAND(data) {
 }
 
 
-function UCJUMPZIP(d,i) { 
+function UCJUMPZIP(d,i) {
   JUMPJUMP.selectAll("*").remove();
   JUMP.selectAll("*").remove();
   FRAMES.select("table").select("tbody").selectAll("tr").remove();
   d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
-  ZIP.file(d).async("string").then(UCJUMP);
+  JSZipUtils.getBinaryContent(d+".zip", function(err, data) {
+    if(err) { throw err; }
+    ZIP.loadAsync(data).then(function () {
+        ZIP.file(d+".json").async("string").then(UCJUMP);
+      });
+  });
 }
 
 function UCSTANDZIP(d,i) {
@@ -735,6 +740,35 @@ function UCSTANDZIP(d,i) {
   ZIP1.file(d).async("string").then(UCSTAND);
 }
 
+var JUMPZIPS = [
+  "JUMP_ALX",
+  "JUMP_BLR",
+  "JUMP_BLR2",
+  "JUMP_BRD",
+  "JUMP_BRD2",
+  "JUMP_BSN",
+  "JUMP_CMY",
+  "JUMP_CNL",
+  "JUMP_CNL2",
+  "JUMP_DSM",
+  "JUMP_FAN",
+  "JUMP_GUL",
+  "JUMP_IBK",
+  "JUMP_JRI",
+  "JUMP_KEN",
+  "JUMP_KRN",
+  "JUMP_LAR",
+  "JUMP_NCL",
+  "JUMP_NCL2",
+  "JUMP_NSH",
+  "JUMP_RMK",
+  "JUMP_RSD",
+  "JUMP_RYU",
+  "JUMP_RYU2",
+  "JUMP_VEG",
+  "JUMP_VEG2",
+  "JUMP_ZGF",
+  ];
 var ZIP = new JSZip();
 var ZIP1 = new JSZip();
 
@@ -750,17 +784,27 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
     });
 });
 
-JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
-    if(err) { throw err; }
-    ZIP.loadAsync(data).then(function () {
-      var TB = JUMPZIP.select("table").select("tbody");
-      TB.selectAll("tr").remove();
-      var TR = TB.selectAll("tr").data(Object.keys(ZIP.files).sort(function(a,b){return a.split(".")[0] > b.split(".")[0] ? 1 : -1;})).enter().append("tr").on("click",UCJUMPZIP);
-      TR.selectAll("td").data(function(d,i){ return [i+1,d.split(".")[0]]; }).enter().append("td").text(function(d,i){ return d; });
+function UCJUMPZIPS() {
+  var TB = JUMPZIP.select("table").select("tbody");
+  TB.selectAll("tr").remove();
+  var TR = TB.selectAll("tr").data(JUMPZIPS).enter().append("tr").on("click",UCJUMPZIP);
+  TR.selectAll("td").data(function(d,i){ return [i+1,d]; }).enter().append("td").text(function(d,i){ return d; });
+}
 
-      // ZIP.file("JUMP_RYU.json").async("string").then(UCJUMP);
-    });
-});
+UCJUMPZIPS();
+
+
+// JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
+//     if(err) { throw err; }
+//     ZIP.loadAsync(data).then(function () {
+//       var TB = JUMPZIP.select("table").select("tbody");
+//       TB.selectAll("tr").remove();
+//       var TR = TB.selectAll("tr").data(Object.keys(ZIP.files).sort(function(a,b){return a.split(".")[0] > b.split(".")[0] ? 1 : -1;})).enter().append("tr").on("click",UCJUMPZIP);
+//       TR.selectAll("td").data(function(d,i){ return [i+1,d.split(".")[0]]; }).enter().append("td").text(function(d,i){ return d; });
+
+//       // ZIP.file("JUMP_RYU.json").async("string").then(UCJUMP);
+//     });
+// });
 
 </script>
 
