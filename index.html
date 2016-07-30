@@ -799,9 +799,13 @@ function ALLJUMP() {
     if (d.data==null) {
       JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
         if(err) { throw err; }
+        
         var zip = new JSZip();
+        d.data = zip;
         zip.loadAsync(data).then(function () {          
-          zip.file(d.zip+".json").async("string").then(function(data){ d.data=data; d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+          zip.file(d.zip+".json").async("string")
+              //.then(function(data){ d.data=data; d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+              .then(function(data){ d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
         });
       });
     }
@@ -833,7 +837,8 @@ function UCJUMPZIP(d,i) {
     d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
     d3.select(this).classed("UC",true);
     // UCJUMP(d.data);
-    UCJUMP(JSON.parse(d.data));
+    // UCJUMP(JSON.parse(d.data));
+    d.data.file(d.zip+".json").async("string").then(function(data){ UCJUMP(JSON.parse(data)); });
     return;
   }
 
@@ -862,11 +867,14 @@ function UCJUMPZIP(d,i) {
 
   JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
     if(err) { throw err; }
-    ZIP.loadAsync(data).then(function () {
-        ZIP.file(d.zip+".json").async("string")
-          //.then(function(data){UCJUMP(JSON.parse(data));});
-          .then(function(data){d.data=data; UCJUMP(JSON.parse(d.data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
-          // .then(function(data){d.data=JSON.parse(data); UCJUMP(d.data);});
+    d.data = new JSZip();
+    d.data.loadAsync(data).then(function () {
+        d.data.file(d.zip+".json").async("string")
+        .then(function(data){ UCJUMP(JSON.parse(data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+        // d.data.file(d.zip+".json").async("string")
+          // .then(function(data){UCJUMP(JSON.parse(data));});
+          // .then(function(data){d.data=data; UCJUMP(JSON.parse(d.data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+          // .then(function(data){d.data=JSON.parse(data); UCJUMP(d.data);});          
       });
   });
 }
