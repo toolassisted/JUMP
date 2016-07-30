@@ -195,23 +195,29 @@
     cursor: s-resize;
   }
   
+  table.FRAMES tr {
+    white-space: nowrap;
+    padding: 2px;
+    cursor: pointer;
+  }
+
   table.FRAMES tbody tr.UC {
-    background-color: #060;
-  }
-
-  table.FRAMES tbody tr:nth-child(even) td.UC0 {  
-    background-color: #050;
-  }
-  table.FRAMES tbody tr:nth-child(odd) td.UC0 {
-    background-color: #030;
-  }
-
-  table.FRAMES tbody tr.UC0 {  
-    background-color: #030;
+    background-color: #060 !important;
   }
 
   table.FRAMES tbody tr:hover {
-    background-color: #060;
+    background-color: #060 !important;
+  }
+
+  table.FRAMES tbody tr:nth-child(even).UC0 {  
+    background-color: #030;
+  }
+  table.FRAMES tbody tr:nth-child(odd).UC0 {
+    background-color: #030;
+  }
+
+  table.FRAMES tbody tr.UC1 {  
+    background-color: #030;
   }
 
   #LINKS div.COL {
@@ -434,7 +440,7 @@
 <div id="JUMPZIP">
 <table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>18 MB</td><td>LOADING...</td></tr></tbody></table>
 <br/>
-<table class="FRAMES"><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>LOL</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th>LOAD</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td onclick="ALLJUMP();">19 MB</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -490,7 +496,9 @@ var G = d3.select("#G");
 var GG = d3.select("#GG");
 var G1 = d3.select("#G1");
 var GG1 = d3.select("#GG1");
-var I1 = 25;
+var JJ = {p:0,m:"9J",md:3,m2:"5LK"};
+var SS = {p:1,m:"5LP"};
+var I1 = 12;
 var I2 = 25;
 
 function TOGGLESTAGE() {  
@@ -508,16 +516,23 @@ function STANDROW(d,i) {
 }
 
 function JUMPJUMPVIEW(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey && i>=0) return;
 
-  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
-  d3.select(this).classed("UC",true);
+  JJ.p = d.p;
+  JJ.m = d.m;
+  JJ.md = d.md;
+  JJ.m2 = d.m2;
+
+  if (i>=0) {
+    d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+    d3.select(this).classed("UC",true);
+  }
 
   var TB = FRAMES.select("table").select("tbody");
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -542,7 +557,12 @@ function JUMPJUMPVIEW(d,i) {
 }
 
 function JUMPVIEW(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+
+  JJ.p = d.p;
+  JJ.m = d.m;
+  JJ.md = d.md;
+  JJ.m2 = d.m2;
 
   d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
@@ -551,7 +571,7 @@ function JUMPVIEW(d,i) {
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })      
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -571,12 +591,12 @@ function JUMPVIEW(d,i) {
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
-  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == d.md; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T";}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW).classed("UC",function(dd,ii){ return dd.p == d.p && dd.m == d.m && dd.m2 == d.m2; });
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == d.md; })).enter().append("tr").classed("UC1",function(d){return d.m2=="5T";}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW).classed("UC",function(dd,ii){ return dd.p == d.p && dd.m == d.m && dd.m2 == d.m2; });
   JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
 
 }
 function JUMPSTAGE(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
   
   d.c6.forEach(function(c){
     G.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
@@ -592,7 +612,7 @@ function JUMPSTAGE(d,i) {
     ) JUMPSTAGE1(d);
 }
 function JUMPSTAGE1(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
 
   if (i!=null) { I1 = i; G1.selectAll("*").remove(); }
 
@@ -611,10 +631,17 @@ function JUMPSTAGE1(d,i) {
 
 
 function STANDVIEW(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey && !d3.event.shiftKey && i>=0) return;
 
-  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
-  d3.select(this).classed("UC",true);
+  if (i>=-1){
+    SS.p = d.p;
+    SS.m = d.m;
+  }
+
+  if (i>=0) {
+    d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+    d3.select(this).classed("UC",true);
+  }
 
   var hi = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; });
   if (hi>-1) I2 = hi;
@@ -623,7 +650,7 @@ function STANDVIEW(d,i) {
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",STANDSTAGE1).on("click",STANDSTAGE1).classed("UC",function(dd,ii){return ii==I2;});
   TR.selectAll("td")
-      .data(function(d,i){ return [d.i-1,d.s + " " + (d.sf+1) + (d.sf==d.s1?" IASA":d.sf>d.s1?" +":""),d.x1.toFixed(4),d.x2.toFixed(4),d.x3.toFixed(4)]; })
+      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1) + (dd.sf==dd.s1?" IASA":dd.sf>dd.s1?" +":""),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -638,7 +665,7 @@ function STANDVIEW(d,i) {
 
 }
 function STANDSTAGE(d,i) {
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
 
   d.c6.forEach(function(c){
     GG.append("rect").attr("x",c.rx).attr("y",-c.ry-c.rh).attr("width",c.rw).attr("height",c.rh).classed((c.t&0x4)==0x4 ? "GRAB" : (c.t&0x2)==0x0 ? "PROJINV" : "HURT",true);
@@ -654,7 +681,7 @@ function STANDSTAGE(d,i) {
     ) STANDSTAGE1(d);
 }
 function STANDSTAGE1(d,i) {  
-  if (d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;
 
   if (i!=null) { I2 = i; GG1.selectAll("*").remove(); }
 
@@ -672,7 +699,7 @@ function STANDSTAGE1(d,i) {
 }
 
 function UCJUMP(data) {
-  JUMPS[1] = JSON.parse(data);
+  JUMPS[1] = data;//JSON.parse(data);
 
   JUMPJUMP.selectAll("*").remove();
   var TABLE = JUMPJUMP.append("table").classed("FRAMES",true);
@@ -683,8 +710,14 @@ function UCJUMP(data) {
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
-  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == 0; })).enter().append("tr").classed("UC0",function(d){return d.m2=="5T"}).on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW);
+  var JJTR = JJTB.selectAll("tr").data(JUMPS[1].filter(function(dd){return dd.md == JJ.md; })).enter().append("tr")
+    .classed("UC1",function(d){return d.m2=="5T"})
+    .classed("UC",function(d){ return d.p == JJ.p && d.m == JJ.m && d.md == JJ.md && d.m2 == JJ.m2; })
+    .on("mouseenter",JUMPJUMPVIEW).on("click",JUMPJUMPVIEW);
   JJTR.selectAll("td").data(JUMPROW).enter().append("td").text(function(d,i){ return d; });
+
+  var i = JUMPS[1].findIndex(function(ff,ii){ return ff.p == JJ.p && ff.m == JJ.m  && ff.md == JJ.md  && ff.m2 == JJ.m2; });
+  if (i>=0) JUMPJUMPVIEW(JUMPS[1][i],-1);
 }
 
 function UCSTAND(data) {
@@ -713,21 +746,127 @@ function UCSTAND(data) {
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
-  var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr").classed("UC0",function(d){return d.m=="5S" || d.m.endsWith("LP");}).on("mouseenter",STANDVIEW).on("click",STANDVIEW);
+  var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr")
+    .classed("UC1",function(d){return d.m=="5S" || d.m.endsWith("LP");})
+    .classed("UC",function(d){ return d.p == SS.p && d.m == SS.m; })    
+    .on("mouseenter",STANDVIEW).on("click",STANDVIEW);
   TR.selectAll("td").data(STANDROW).enter().append("td").text(function(d,i){ return d; });
+
+  var i = JUMPS[2].findIndex(function(ff,ii){ return ff.p == SS.p && ff.m == SS.m; });
+  if (i>=0) STANDVIEW(JUMPS[2][i],-1);
+  else {
+    i = JUMPS[2].findIndex(function(ff,ii){ return ff.p == SS.p && ff.m == "5S"; });
+    if (i>=0) STANDVIEW(JUMPS[2][i],-2);
+  }
 }
 
+var JUMPZIPS = [
+  {"data":null,"zip":"JUMP_ALX"},
+  {"data":null,"zip":"JUMP_BLR"},
+  {"data":null,"zip":"JUMP_BLR2"},
+  {"data":null,"zip":"JUMP_BRD"},
+  {"data":null,"zip":"JUMP_BRD2"},
+  {"data":null,"zip":"JUMP_BSN"},
+  {"data":null,"zip":"JUMP_CMY"},
+  {"data":null,"zip":"JUMP_CNL"},
+  {"data":null,"zip":"JUMP_CNL2"},
+  {"data":null,"zip":"JUMP_DSM"},
+  {"data":null,"zip":"JUMP_FAN"},
+  {"data":null,"zip":"JUMP_GUL"},
+  {"data":null,"zip":"JUMP_IBK"},
+  {"data":null,"zip":"JUMP_JRI"},
+  {"data":null,"zip":"JUMP_KEN"},
+  {"data":null,"zip":"JUMP_KRN"},
+  {"data":null,"zip":"JUMP_LAR"},
+  {"data":null,"zip":"JUMP_NCL"},
+  {"data":null,"zip":"JUMP_NCL2"},
+  {"data":null,"zip":"JUMP_NSH"},
+  {"data":null,"zip":"JUMP_RMK"},
+  {"data":null,"zip":"JUMP_RSD"},
+  {"data":null,"zip":"JUMP_RYU"},
+  {"data":null,"zip":"JUMP_RYU2"},
+  {"data":null,"zip":"JUMP_VEG"},
+  {"data":null,"zip":"JUMP_VEG2"},
+  {"data":null,"zip":"JUMP_ZGF"},
+  ];
+
+var ZIP = new JSZip();
+var ZIP1 = new JSZip();
+
+function ALLJUMP() {
+
+  JUMPZIPS.forEach(function(d,i){
+    if (d.data==null) {
+      JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
+        if(err) { throw err; }
+        var zip = new JSZip();
+        zip.loadAsync(data).then(function () {          
+          zip.file(d.zip+".json").async("string").then(function(data){ d.data=data; d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+        });
+      });
+    }
+  });
+
+
+  JUMPZIP.select("tbody").selectAll("tr").classed("UC0",false);
+
+  //d3.select(this).classed("UC",false);
+
+  // JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
+  //   if(err) { throw err; }
+  //   ZIP.loadAsync(data).then(function () {
+  //     JUMPZIPS.forEach(function(d,i){
+  //       if (d.data==null) {
+  //         ZIP.file(d.zip+".json").async("string")
+  //           //.then(function(data){console.log(d.zip); d.data=JSON.parse(data);});
+  //           .then(function(data){ d.data=data; });
+  //       }
+  //     });
+  //   });
+  // });  
+}
 
 function UCJUMPZIP(d,i) {
-  JUMPJUMP.selectAll("*").remove();
-  JUMP.selectAll("*").remove();
-  FRAMES.select("table").select("tbody").selectAll("tr").remove();
+
+  if (d.data != null) {
+    if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;    
+    d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+    d3.select(this).classed("UC",true);
+    // UCJUMP(d.data);
+    UCJUMP(JSON.parse(d.data));
+    return;
+  }
+
+  if (d3.event != null && d3.event.type == "mouseenter") return;
+
   d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
-  JSZipUtils.getBinaryContent(d+".zip", function(err, data) {
+  d3.select(this).classed("UC0",true);
+
+  JUMPJUMP.selectAll("*").remove();
+  var TABLE = JUMPJUMP.append("table").classed("FRAMES",true);
+  var THEAD = TABLE.append("thead").append("tr");
+  var JJTB = TABLE.append("tbody");
+  var TH = ["SIDE", // "CHAR",
+            "JUMP", "WAIT", "MOVE" //, "FRAMES"
+            ];
+
+  THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
+  var TR = JJTB.append("tr");
+  TR.append("td").text("1 MB");
+  TR.append("td").text("LOADING...");
+  var JJUNZIP = TR.append("td").attr("id","JJUNZIP");
+  
+  JUMP.selectAll("*").remove();
+  FRAMES.select("table").select("tbody").selectAll("tr").remove();
+
+  JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
     if(err) { throw err; }
     ZIP.loadAsync(data).then(function () {
-        ZIP.file(d+".json").async("string").then(UCJUMP);
+        ZIP.file(d.zip+".json").async("string")
+          //.then(function(data){UCJUMP(JSON.parse(data));});
+          .then(function(data){d.data=data; UCJUMP(JSON.parse(d.data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+          // .then(function(data){d.data=JSON.parse(data); UCJUMP(d.data);});
       });
   });
 }
@@ -739,38 +878,6 @@ function UCSTANDZIP(d,i) {
   d3.select(this).classed("UC",true);
   ZIP1.file(d).async("string").then(UCSTAND);
 }
-
-var JUMPZIPS = [
-  "JUMP_ALX",
-  "JUMP_BLR",
-  "JUMP_BLR2",
-  "JUMP_BRD",
-  "JUMP_BRD2",
-  "JUMP_BSN",
-  "JUMP_CMY",
-  "JUMP_CNL",
-  "JUMP_CNL2",
-  "JUMP_DSM",
-  "JUMP_FAN",
-  "JUMP_GUL",
-  "JUMP_IBK",
-  "JUMP_JRI",
-  "JUMP_KEN",
-  "JUMP_KRN",
-  "JUMP_LAR",
-  "JUMP_NCL",
-  "JUMP_NCL2",
-  "JUMP_NSH",
-  "JUMP_RMK",
-  "JUMP_RSD",
-  "JUMP_RYU",
-  "JUMP_RYU2",
-  "JUMP_VEG",
-  "JUMP_VEG2",
-  "JUMP_ZGF",
-  ];
-var ZIP = new JSZip();
-var ZIP1 = new JSZip();
 
 JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
     if(err) { throw err; }
@@ -787,8 +894,8 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
 function UCJUMPZIPS() {
   var TB = JUMPZIP.select("table").select("tbody");
   TB.selectAll("tr").remove();
-  var TR = TB.selectAll("tr").data(JUMPZIPS).enter().append("tr").on("click",UCJUMPZIP);
-  TR.selectAll("td").data(function(d,i){ return [i+1,d]; }).enter().append("td").text(function(d,i){ return d; });
+  var TR = TB.selectAll("tr").data(JUMPZIPS).enter().append("tr").on("click",UCJUMPZIP).on("mouseenter",UCJUMPZIP);
+  TR.selectAll("td").data(function(d,i){ return [i+1,d.zip]; }).enter().append("td").text(function(d,i){ return d; });
 }
 
 UCJUMPZIPS();
