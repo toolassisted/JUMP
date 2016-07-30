@@ -879,6 +879,7 @@ function UCSTANDZIP(d,i) {
   ZIP1.file(d).async("string").then(UCSTAND);
 }
 
+
 JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
     if(err) { throw err; }
     ZIP1.loadAsync(data).then(function () {      
@@ -888,6 +889,48 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
       TR.selectAll("td").data(function(d,i){ return [i+1,d.split("_")[1]]; }).enter().append("td").text(function(d,i){ return d; });
 
       // ZIP1.file("LOL_BSN_BSN.json").async("string").then(UCSTAND);
+
+      TR = TB.append("tr");
+      TR.append("td").html("&nbsp;");
+      TR.append("td").html("&nbsp;");
+
+      var TH = STANDZIP.select("table").append("thead");
+      TR = TH.append("tr").datum(2.0);
+      TR.append("td").text("X");
+      var P2X = TR.append("td").text("2.0").attr("id","P2X");
+
+      function UCP2X() {
+        P2X.text(P2X.datum().toFixed(1));
+        var X = P2X.datum() - 2.0;
+        GG.attr("transform","translate(" + X.toFixed(1) + " 0)");
+        GG1.attr("transform","translate(" + X.toFixed(1) + " 0)");
+      }
+
+      TB = STANDZIP.select("table").append("tbody");
+
+      TR = TB.append("tr").on("click", function(d,i){ P2X.datum(P2X.datum()-1.0); UCP2X(); });
+      TR.append("td").text("<<");
+      TR.append("td").text("-1.0");
+
+      TR = TB.append("tr").on("click", function(d,i){ P2X.datum(P2X.datum()+1.0); UCP2X(); });
+      TR.append("td").text(">>");
+      TR.append("td").text("+1.0");
+
+      TR = TB.append("tr").on("click", function(d,i){ P2X.datum(P2X.datum()-0.1); UCP2X(); });
+      TR.append("td").text("<");
+      TR.append("td").text("-0.1");
+      TR = TB.append("tr").on("click", function(d,i){ P2X.datum(P2X.datum()+0.1); UCP2X(); });
+      TR.append("td").text(">");
+      TR.append("td").text("+0.1");
+
+      TR = TB.append("tr");
+      TR.append("td").html("&nbsp;");
+      TR.append("td").html("&nbsp;");
+
+      TR = TB.selectAll("tr.X").data([0.0, 0.5, 1.0, 1.5, 2.0, 2.5]).enter().append("tr")
+                    .on("click", function(d,i){ P2X.datum(d); UCP2X(); })
+                    .on("mouseenter", function(d,i){ if (!d3.event.shiftKey) return; P2X.datum(d); UCP2X(); });
+      TR.selectAll("td").data(function(d,i){ return ["X",d.toFixed(1)]; }).enter().append("td").text(function(d,i){ return d; });
     });
 });
 
