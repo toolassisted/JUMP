@@ -916,6 +916,10 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
       TR.append("td").text(">>");
       TR.append("td").text("+1.0");
 
+      TR = TB.append("tr");
+      TR.append("td").html("&nbsp;");
+      TR.append("td").html("&nbsp;");
+
       TR = TB.append("tr").on("click", function(d,i){ P2X.datum(P2X.datum()-0.1); UCP2X(); });
       TR.append("td").text("<");
       TR.append("td").text("-0.1");
