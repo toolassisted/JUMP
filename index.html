@@ -440,7 +440,7 @@
 <div id="JUMPZIP">
 <table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>7 MB</td><td>LOADING...</td></tr></tbody></table>
 <br/>
-<table class="FRAMES"><thead><tr><th id="LOADJUMP">LOAD</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th id="LOADJUMP">LOAD</th></tr></thead><tbody><tr><td onclick="ALLSTAND(); ALLJUMP();">ALL</td></tr><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td onclick="ALLSTAND();">ALL STAND</td></tr><tr><td id="ALLLOADSTAND">&nbsp;</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -725,22 +725,7 @@ function UCJUMP(data) {
 }
 
 function UCSTAND(data) {
-  var MOVES = [[],[]];
-  JUMPS[2] = [];
-  JSON.parse(data).forEach(function(d,i){
-    if (MOVES[d.p][d.f[3].s] === undefined) {
-      MOVES[d.p][d.f[3].s] = 1;
-      if (d.p==1) {
-        d.f.forEach(function(f){
-          f.c5 = f.c5.filter(function(c){return c.t!=4&&c.t!=3;})
-        });
-        JUMPS[2].push(d);
-      }
-    } else {
-      MOVES[d.p][d.f[3].s]++;
-    }
-
-  });
+  JUMPS[2] = data;
 
   var TABLE = STAND.append("table").classed("FRAMES",true);
   var THEAD = TABLE.append("thead").append("tr");
@@ -794,6 +779,37 @@ var JUMPZIPS = [
   {"data":null,"zip":"JUMP_ZGF"},
   ];
 
+var STANDZIPS = [
+  {"data":null,"zip":"ALX"},
+  {"data":null,"zip":"BLR"},
+  {"data":null,"zip":"BLR2"},
+  {"data":null,"zip":"BRD"},
+  {"data":null,"zip":"BRD2"},
+  {"data":null,"zip":"BSN"},
+  {"data":null,"zip":"CMY"},
+  {"data":null,"zip":"CNL"},
+  {"data":null,"zip":"CNL2"},
+  {"data":null,"zip":"DSM"},
+  {"data":null,"zip":"FAN"},
+  {"data":null,"zip":"GUL"},
+  {"data":null,"zip":"IBK"},
+  {"data":null,"zip":"JRI"},
+  {"data":null,"zip":"JRI2"},
+  {"data":null,"zip":"KEN"},
+  {"data":null,"zip":"KRN"},
+  {"data":null,"zip":"LAR"},
+  {"data":null,"zip":"NCL"},
+  {"data":null,"zip":"NCL2"},
+  {"data":null,"zip":"NSH"},
+  {"data":null,"zip":"RMK"},
+  {"data":null,"zip":"RSD"},
+  {"data":null,"zip":"RYU"},
+  {"data":null,"zip":"RYU2"},
+  {"data":null,"zip":"VEG"},
+  {"data":null,"zip":"VEG2"},
+  {"data":null,"zip":"ZGF"},
+  ];
+
 var ZIP = new JSZip();
 var ZIP1 = new JSZip();
 
@@ -820,6 +836,12 @@ function ALLJUMP() {
 
   JUMPZIP.select("tbody").selectAll("tr").classed("UC0",false);
 
+  STANDZIPS.forEach(function(d,i){
+    if (d.data==null) {
+      LOADSTANDZIP(d);
+    }
+  });
+
   //d3.select(this).classed("UC",false);
 
   // JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
@@ -835,6 +857,17 @@ function ALLJUMP() {
   //   });
   // });  
 }
+
+function ALLSTAND() {
+
+  STANDZIPS.forEach(function(d,i){
+    if (d.data==null) {
+      LOADSTANDZIP(d).then(function(data){ d3.select("#ALLLOADSTAND").text("" + STANDZIPS.filter(function(d){return d.data!=null;}).length  + " / " + STANDZIPS.length); });
+    }
+  });
+}
+
+
 
 function UCJUMPZIP(d,i) {
 
@@ -888,22 +921,56 @@ function UCJUMPZIP(d,i) {
 }
 
 
-function UCSTANDZIP(d,i) {
-  STAND.selectAll("*").remove();
-  FRAMES2.select("table").select("tbody").selectAll("tr").remove();
+function UCSTANDZIP(dd,i) {
+
+  if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey && i>=0) return;
+
   d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
-  ZIP1.file(d).async("string").then(UCSTAND);
+
+  STAND.selectAll("*").remove();
+  FRAMES2.select("table").select("tbody").selectAll("tr").remove();
+
+  if (dd.data != null) {
+    UCSTAND(dd.data);
+    return;
+  }
+
+  LOADSTANDZIP(dd).then(function(data){ UCSTAND(dd.data); d3.select("#ALLLOADSTAND").text("" + STANDZIPS.filter(function(d){return d.data!=null;}).length  + " / " + STANDZIPS.length); });
+  // ZIP1.file(d).async("string").then(UCSTAND);
+}
+
+
+function LOADSTANDZIP(dd) {
+  return ZIP1.file("LOL_" + dd.zip + "_" + dd.zip + ".json").async("string").then(function(data){
+    dd.data = [];
+    var MOVES = [[],[]];
+    JSON.parse(data).forEach(function(d,i){
+      if (MOVES[d.p][d.f[3].s] === undefined) {
+        MOVES[d.p][d.f[3].s] = 1;
+        if (d.p==1) {
+          d.f.forEach(function(f){
+            f.c5 = f.c5.filter(function(c){return c.t!=4&&c.t!=3;})
+          });
+          dd.data.push(d);
+        }
+      } else {
+        MOVES[d.p][d.f[3].s]++;
+      }
+    });
+  });
 }
 
 
 JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
     if(err) { throw err; }
+    d3.select("#ALLLOADSTAND").text("0 / " + STANDZIPS.length);
     ZIP1.loadAsync(data).then(function () {      
       var TB = STANDZIP.select("table").select("tbody");
       TB.selectAll("tr").remove();      
-      var TR = TB.selectAll("tr").data(Object.keys(ZIP1.files).sort(function(a,b){return a.split("_")[1] > b.split("_")[1] ? 1 : -1;})).enter().append("tr").on("click",UCSTANDZIP);
-      TR.selectAll("td").data(function(d,i){ return [i+1,d.split("_")[1]]; }).enter().append("td").text(function(d,i){ return d; });
+      var TR = TB.selectAll("tr").data(STANDZIPS).enter().append("tr").on("click",UCSTANDZIP).on("mouseenter",UCSTANDZIP);
+      // var TR = TB.selectAll("tr").data(Object.keys(ZIP1.files).sort(function(a,b){return a.split("_")[1] > b.split("_")[1] ? 1 : -1;})).enter().append("tr").on("click",UCSTANDZIP).on("mouseenter",UCSTANDZIP);
+      TR.selectAll("td").data(function(d,i){ return [i+1,d.zip]; }).enter().append("td").text(function(d,i){ return d; });
 
       // ZIP1.file("LOL_BSN_BSN.json").async("string").then(UCSTAND);
 
