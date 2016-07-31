@@ -440,7 +440,7 @@
 <div id="JUMPZIP">
 <table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>7 MB</td><td>LOADING...</td></tr></tbody></table>
 <br/>
-<table class="FRAMES"><thead><tr><th id="LOADJUMP">LOADING...</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th id="LOADJUMP">LOAD</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -967,7 +967,7 @@ function UCJUMPZIPS() {
 
 JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
     if(err) { throw err; }
-    d3.select("#LOADJUMP").text("LOAD");
+    // d3.select("#LOADJUMP").text("LOAD");
     d3.select("#ALLLOAD").text("0 / " + JUMPZIPS.length);
     ZIP.loadAsync(data).then(function () {
       var TB = JUMPZIP.select("table").select("tbody");
