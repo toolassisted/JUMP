@@ -438,9 +438,9 @@
 </head>
 <body>
 <div id="JUMPZIP">
-<table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>18 MB</td><td>LOADING...</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th>#</th><th>JUMP</th></tr></thead><tbody><tr><td>7 MB</td><td>LOADING...</td></tr></tbody></table>
 <br/>
-<table class="FRAMES"><thead><tr><th>LOAD</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td onclick="ALLJUMP();">19 MB</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
+<table class="FRAMES"><thead><tr><th id="LOADJUMP">LOADING...</th></tr></thead><tbody><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody><thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -487,6 +487,8 @@ var JUMPJUMP = d3.select("#JUMPJUMP");
 var JUMP = d3.select("#JUMP");
 var STAND = d3.select("#STAND");
 var JUMPS = [{},{},{}];
+var JUMPSCRIPTS = [{},{},{}];
+var JUMPFRAMES = [{},{},{}];
 var FRAMES = d3.select("#FRAMES");
 var FRAMES2 = d3.select("#FRAMES2");
 var VIEW = d3.select("#VIEW");
@@ -530,9 +532,9 @@ function JUMPJUMPVIEW(d,i) {
 
   var TB = FRAMES.select("table").select("tbody");
   TB.selectAll("tr").remove();
-  var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
+  var TR = TB.selectAll("tr").data(d.f.map(function(dd){ return JUMPFRAMES[1][dd]; })).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })
+      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -540,7 +542,7 @@ function JUMPJUMPVIEW(d,i) {
       .text(function(d,i){ return d; });
   G.selectAll("*").remove();  
   G1.selectAll("*").remove();
-  d.f.forEach(JUMPSTAGE);
+  d.f.map(function(dd){ return JUMPFRAMES[1][dd]; }).forEach(JUMPSTAGE);
 
 
   JUMP.selectAll("*").remove();
@@ -569,9 +571,9 @@ function JUMPVIEW(d,i) {
 
   var TB = FRAMES.select("table").select("tbody");
   TB.selectAll("tr").remove();
-  var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
+  var TR = TB.selectAll("tr").data(d.f.map(function(dd){ return JUMPFRAMES[1][dd]; })).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })      
+      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })      
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -579,7 +581,7 @@ function JUMPVIEW(d,i) {
       .text(function(d,i){ return d; });
   G.selectAll("*").remove();  
   G1.selectAll("*").remove();
-  d.f.forEach(JUMPSTAGE);
+  d.f.map(function(dd){ return JUMPFRAMES[1][dd]; }).forEach(JUMPSTAGE);
 
 
   JUMPJUMP.selectAll("*").remove();
@@ -699,7 +701,9 @@ function STANDSTAGE1(d,i) {
 }
 
 function UCJUMP(data) {
-  JUMPS[1] = data;//JSON.parse(data);
+  JUMPS[1] = data.r;//JSON.parse(data);
+  JUMPSCRIPTS[1] = data.s;//JSON.parse(data);
+  JUMPFRAMES[1] = data.f;//JSON.parse(data);
 
   JUMPJUMP.selectAll("*").remove();
   var TABLE = JUMPJUMP.append("table").classed("FRAMES",true);
@@ -797,17 +801,19 @@ function ALLJUMP() {
 
   JUMPZIPS.forEach(function(d,i){
     if (d.data==null) {
-      JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
-        if(err) { throw err; }
+      // JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
+      //   if(err) { throw err; }
         
-        var zip = new JSZip();
-        d.data = zip;
-        zip.loadAsync(data).then(function () {          
-          zip.file(d.zip+".json").async("string")
+        // var zip = new JSZip();
+        // d.data = zip;
+        // zip.loadAsync(data).then(function () {          
+          // zip.file(d.zip+".json").async("string")
+          ZIP.file(d.zip+".json").async("string")
               //.then(function(data){ d.data=data; d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
-              .then(function(data){ d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
-        });
-      });
+              // .then(function(data){ d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+              .then(function(data){ d.data = JSON.parse(data); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+        // });
+      // });
     }
   });
 
@@ -836,9 +842,9 @@ function UCJUMPZIP(d,i) {
     if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey) return;    
     d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
     d3.select(this).classed("UC",true);
-    // UCJUMP(d.data);
+    UCJUMP(d.data);
     // UCJUMP(JSON.parse(d.data));
-    d.data.file(d.zip+".json").async("string").then(function(data){ UCJUMP(JSON.parse(data)); });
+    //d.data.file(d.zip+".json").async("string").then(function(data){ UCJUMP(JSON.parse(data)); });
     return;
   }
 
@@ -858,26 +864,29 @@ function UCJUMPZIP(d,i) {
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
   var TR = JJTB.append("tr");
-  TR.append("td").text("1 MB");
+  TR.append("td").text("");
   TR.append("td").text("LOADING...");
   var JJUNZIP = TR.append("td").attr("id","JJUNZIP");
   
   JUMP.selectAll("*").remove();
   FRAMES.select("table").select("tbody").selectAll("tr").remove();
 
-  JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
-    if(err) { throw err; }
-    d.data = new JSZip();
-    d.data.loadAsync(data).then(function () {
-        d.data.file(d.zip+".json").async("string")
-        .then(function(data){ UCJUMP(JSON.parse(data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
-        // d.data.file(d.zip+".json").async("string")
-          // .then(function(data){UCJUMP(JSON.parse(data));});
-          // .then(function(data){d.data=data; UCJUMP(JSON.parse(d.data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
-          // .then(function(data){d.data=JSON.parse(data); UCJUMP(d.data);});          
-      });
-  });
+  // JSZipUtils.getBinaryContent(d.zip+".zip", function(err, data) {
+  //    if(err) { throw err; }
+      //d.data = new JSZip();
+      //d.data.loadAsync(data).then(function () {
+      // ZIP.loadAsync(data).then(function () {
+          ZIP.file(d.zip+".json").async("string")
+          // d.data.file(d.zip+".json").async("string")
+          .then(function(data){ d.data = JSON.parse(data); UCJUMP(d.data); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+          // d.data.file(d.zip+".json").async("string")
+            // .then(function(data){UCJUMP(JSON.parse(data));});
+            // .then(function(data){d.data=data; UCJUMP(JSON.parse(d.data)); d3.select("#ALLLOAD").text("" + JUMPZIPS.filter(function(d){return d.data!=null;}).length  + " / " + JUMPZIPS.length); });
+            // .then(function(data){d.data=JSON.parse(data); UCJUMP(d.data);});          
+      // });
+  // });
 }
+
 
 function UCSTANDZIP(d,i) {
   STAND.selectAll("*").remove();
@@ -953,20 +962,24 @@ function UCJUMPZIPS() {
   TR.selectAll("td").data(function(d,i){ return [i+1,d.zip]; }).enter().append("td").text(function(d,i){ return d; });
 }
 
-UCJUMPZIPS();
+// UCJUMPZIPS();
 
 
-// JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
-//     if(err) { throw err; }
-//     ZIP.loadAsync(data).then(function () {
-//       var TB = JUMPZIP.select("table").select("tbody");
-//       TB.selectAll("tr").remove();
-//       var TR = TB.selectAll("tr").data(Object.keys(ZIP.files).sort(function(a,b){return a.split(".")[0] > b.split(".")[0] ? 1 : -1;})).enter().append("tr").on("click",UCJUMPZIP);
-//       TR.selectAll("td").data(function(d,i){ return [i+1,d.split(".")[0]]; }).enter().append("td").text(function(d,i){ return d; });
+JSZipUtils.getBinaryContent("JUMP.zip", function(err, data) {
+    if(err) { throw err; }
+    d3.select("#LOADJUMP").text("LOAD");
+    d3.select("#ALLLOAD").text("0 / " + JUMPZIPS.length);
+    ZIP.loadAsync(data).then(function () {
+      var TB = JUMPZIP.select("table").select("tbody");
+      TB.selectAll("tr").remove();
+      //  var TR = TB.selectAll("tr").data(Object.keys(ZIP.files).sort(function(a,b){return a.split(".")[0] > b.split(".")[0] ? 1 : -1;})).enter().append("tr").on("click",UCJUMPZIP);
+      // TR.selectAll("td").data(function(d,i){ return [i+1,d.split(".")[0]]; }).enter().append("td").text(function(d,i){ return d; });
+      var TR = TB.selectAll("tr").data(JUMPZIPS).enter().append("tr").on("click",UCJUMPZIP).on("mouseenter",UCJUMPZIP);
+      TR.selectAll("td").data(function(d,i){ return [i+1,d.zip]; }).enter().append("td").text(function(d,i){ return d; });
 
-//       // ZIP.file("JUMP_RYU.json").async("string").then(UCJUMP);
-//     });
-// });
+      // ZIP.file("JUMP_RYU.json").async("string").then(UCJUMP);
+    });
+});
 
 </script>
 
