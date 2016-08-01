@@ -456,7 +456,7 @@
 </div>
 <div id="STANDZIP"><table class="FRAMES"><thead><tr><th>#</th><th>STAND</th></tr></thead><tbody><tr><td>4 MB</td><td>LOADING...</td></tr></tbody></table></div>
 <div id="STAND"></div>
-<div id="FRAMES2"><table class="FRAMES"><thead><tr><th>#</th><th>SCRIPT</th><th>X1</th><th>X2</th><th>X3</th></tr></thead><tbody><tr><td>&lt;</td><td>U CLICK</td></tr><tr><td>&lt;</td><td>U C</td></tr></tbody></table></div>
+<div id="FRAMES2"><table class="FRAMES"><thead><tr><th>#</th><th>SCRIPT</th><th>X1</th><th>X2</th><th>X3</th><th>DATA</th></tr></thead><tbody><tr><td>&lt;</td><td>U CLICK</td></tr><tr><td>&lt;</td><td>U C</td></tr></tbody></table></div>
 <script src="d3.v4.min.js"></script>
 <script src="jszip.min.js"></script>
 <script type="text/javascript" src="jszip-utils.min.js"></script>
@@ -655,7 +655,7 @@ function STANDVIEW(d,i) {
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",STANDSTAGE1).on("click",STANDSTAGE1).classed("UC",function(dd,ii){return ii==I2;});
   TR.selectAll("td")
-      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1) + (dd.sf==dd.s1?" IASA":dd.sf>dd.s1?" +":""),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)]; })
+      .data(function(dd,ii){ return [dd.i-1,dd.s + " " + (dd.sf+1) + (dd.sf==dd.s1?" IASA":dd.sf>dd.s1?" +":""),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4), (dd.c5.length>0?(dd.c5[0].i & 0x7).toString(16):"")]; })
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
