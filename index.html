@@ -443,7 +443,7 @@
 <table class="FRAMES">
 <thead><tr><th id="LOADJUMP">LOAD</th></tr></thead><tbody><tr><td onclick="ALLSTAND(); ALLJUMP();">ALL</td></tr><tr><td onclick="ALLJUMP();">ALL JUMP</td></tr><tr><td id="ALLLOAD">&nbsp;</td></tr><tr><td onclick="ALLSTAND();">ALL STAND</td></tr><tr><td id="ALLLOADSTAND">&nbsp;</td></tr></tbody>
 <thead><tr><th>LOL</th></tr></thead><tbody><tr><td>U CLICK</td></tr><tr><td>U C HIT BOX</td></tr><tr><td>U HOLD SHIFT</td></tr><tr><td>U HOVER</td></tr><tr><td>U SCROLL</td></tr><tr><td>U ZOOM</td></tr><tr><td>U PINCH</td></tr><tr><td>U ZOOM</td></tr><tr><td>&nbsp;</td></tr></tbody>
-<thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr></tbody></table>
+<thead><tr><th>TOGGLE</th></tr></thead><tbody><tr onclick="TOGGLESTAGE();"><td>TOP STAGE</td></tr><tr class="UC" onclick="JUMPHIT=!JUMPHIT;d3.select(this).classed('UC',JUMPHIT)"><td>JUMP HIT</td></tr><tr class="UC" onclick="STANDHIT=!STANDHIT;d3.select(this).classed('UC',STANDHIT)"><td>STAND HIT</td></tr></tbody></table>
 </div>
 <div id="JUMPJUMP"></div>
 <div id="JUMP"></div>
@@ -505,6 +505,8 @@ var JJ = {p:0,m:"9J",md:3,m2:"5LK"};
 var SS = {p:1,m:"5LP"};
 var I1 = 12;
 var I2 = 25;
+var JUMPHIT = true;
+var STANDHIT = true;
 
 function TOGGLESTAGE() {  
   var t1 = VIEW.selectAll("div")._groups[0][0];
@@ -531,6 +533,11 @@ function JUMPJUMPVIEW(d,i) {
   if (i>=0) {
     d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
     d3.select(this).classed("UC",true);
+  }
+
+  if (JUMPHIT) {
+    var hi = d.f.findIndex(function(ff,ii){ return JUMPFRAMES[1][ff].c5.length>0; });
+    if (hi>-1) I1 = hi;
   }
 
   var TB = FRAMES.select("table").select("tbody");
@@ -571,6 +578,11 @@ function JUMPVIEW(d,i) {
 
   d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
+
+  if (JUMPHIT) {
+    var hi = d.f.findIndex(function(ff,ii){ return JUMPFRAMES[1][ff].c5.length>0; });
+    if (hi>-1) I1 = hi;
+  }
 
   var TB = FRAMES.select("table").select("tbody");
   TB.selectAll("tr").remove();
@@ -648,9 +660,11 @@ function STANDVIEW(d,i) {
     d3.select(this).classed("UC",true);
   }
 
-  var hi = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; });
-  if (hi>-1) I2 = hi;
-
+  if (STANDHIT) {
+    var hi = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; });
+    if (hi>-1) I2 = hi;
+  }
+  
   var TB = FRAMES2.select("table").select("tbody");
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f).enter().append("tr").on("mouseenter",STANDSTAGE1).on("click",STANDSTAGE1).classed("UC",function(dd,ii){return ii==I2;});
