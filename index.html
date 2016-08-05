@@ -992,7 +992,7 @@ function UCSTANDZIP(dd,i) {
 
   if (d3.event != null && d3.event.type == "mouseenter" && !d3.event.shiftKey && i>=0) return;
 
-  d3.select(this.parentNode).selectAll(".UC").classed("UC",false);
+  d3.select(this.parentNode.parentNode).selectAll(".UC").classed("UC",false);
   d3.select(this).classed("UC",true);
 
   STAND.selectAll("*").remove();
@@ -1103,11 +1103,19 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
 
       TB = STANDZIP.select("table").append("tbody");
 
-      TR = TB.append("tr").on("click", function(d,i){ UCSTANDALL(3); });
+      TR = TB.append("tr").on("click", function(d,i){ 
+                d3.select(this.parentNode.parentNode).selectAll(".UC").classed("UC",false);
+                d3.select(this).classed("UC",true); 
+                UCSTANDALL(3); 
+              });
       TR.append("td").text("0").classed("ALLLOADSTAND", true);
       TR.append("td").text("3F");
 
-      TR = TB.append("tr").on("click", function(d,i){ UCSTANDALL(4); });
+      TR = TB.append("tr").on("click", function(d,i){ 
+                d3.select(this.parentNode.parentNode).selectAll(".UC").classed("UC",false);
+                d3.select(this).classed("UC",true); 
+                UCSTANDALL(4); 
+              });
       TR.append("td").text("0").classed("ALLLOADSTAND", true);
       TR.append("td").text("4F");
       
