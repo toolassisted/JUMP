@@ -523,7 +523,7 @@ function STANDROW(d,i) {
   return [d.p+1,d.m, START == -2 ? "-" : START, IASA == -2 ? "-" : IASA];
 }
 function STANDALLROW(d,i) {
-  var START = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; })-1;
+  var START = d.f.findIndex(function(ff,ii){ return ff.c5.length>0 && (ff.c5[0].i & 0x3)==0; })-1;
   var IASA = d.f.findIndex(function(ff,ii){ return ff.sf==ff.s1; })-1;
   var DIST = -d.f[START+1].c5[0].rx + 2.0;
   return [d.c,d.m, START == -2 ? "-" : START, IASA == -2 ? "-" : IASA, DIST.toFixed(4)];
