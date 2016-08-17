@@ -1186,12 +1186,12 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
           .attr("x1", x.range()[0])
           .attr("x2", x.range()[1])
         .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-          .attr("class", "track-inset")
-        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-          .attr("class", "track-overlay")
-          .call(d3.drag()
+          .attr("class", "track-inset");
+        //.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+        //  .attr("class", "track-overlay")
+          STANDX.call(d3.drag()
               .on("start.interrupt", function() { slider.interrupt(); })
-              .on("start drag", function() { hue(x.invert(d3.event.x)); }));
+              .on("start drag", function() { hue(x.invert(d3.event.x-70)); }));
 
       slider.insert("g", ".track-overlay")
           .attr("class", "ticks")
