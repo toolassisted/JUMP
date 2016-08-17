@@ -13,7 +13,7 @@
     width: 2500px;
   }
 
-  line {
+  #STAGE line, #STAGE1 line {
     stroke-width: 1px;
     stroke: #999;
     fill: #ddd;
@@ -265,7 +265,7 @@
     font: 10px sans-serif;
   }
 
-  .axis {
+/*  .axis {
     font: 10px sans-serif;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -289,7 +289,7 @@
     stroke: #ddd;
     stroke-width: 8px;
     stroke-linecap: round;
-  }
+  }*/
 
   .slider .handle {
     fill: #fff;
@@ -434,7 +434,44 @@
   }
 
 </style>
+<style>
 
+  .ticks {
+    font: 10px sans-serif;
+    fill: #ddd;
+  }
+
+  .track,
+  .track-inset,
+  .track-overlay {
+    stroke-linecap: round;
+  }
+
+  .track {
+    stroke: #000;
+    stroke-opacity: 0.3;
+    stroke-width: 10px;
+  }
+
+  .track-inset {
+    stroke: #ddd;
+    /*stroke-width: 8px;*/
+  }
+
+  .track-overlay {
+    pointer-events: stroke;
+    stroke-width: 50px;
+    cursor: crosshair;
+  }
+
+/*  .handle {
+    fill: #fff;
+    stroke: #000;
+    stroke-opacity: 0.5;
+    stroke-width: 1.25px;
+  }*/
+
+</style>
 </head>
 <body>
 <div id="JUMPZIP">
@@ -452,7 +489,8 @@
 <div id="VIEW">
 <div><svg id="STAGE" width="640" height="500"><g id="G00"><g id="G0" transform="translate(320 500)scale(100)"><g id="G"></g><g id="GG"></g><line x1="-2" y1="0" x2="+2" y2="0"></line></g></g></svg></div>
 <div><svg id="STAGE1" width="640" height="500"><g id="GG00"><g id="GG0" transform="translate(320 500)scale(100)"><g id="G1"></g><g id="GG1"></g><line x1="-2" y1="0" x2="+2" y2="0"></line></g></g></svg></div>
-<div></div></div>
+<div><svg id="STANDX" width="640" height="50"></div></div>
+
 </div>
 <div id="STANDZIP"><table class="FRAMES"><thead><tr><th>#</th><th>STAND</th></tr></thead><tbody><tr><td>4 MB</td><td>LOADING...</td></tr></tbody></table></div>
 <div id="STAND"></div>
@@ -464,6 +502,8 @@
 <script type="text/javascript" src="jszip-utils-ie.min.js"></script>
 <![endif]-->
 <script>
+
+
 var zoom = d3.zoom()
     .scaleExtent([1, 2])
     .translateExtent([[0,0],[640,500]])
@@ -498,11 +538,12 @@ var FRAMES2 = d3.select("#FRAMES2");
 var VIEW = d3.select("#VIEW");
 var STAGE = d3.select("#STAGE");
 var STAGE1 = d3.select("#STAGE1");
+var STANDX = d3.select("#STANDX");
 var G = d3.select("#G");
 var GG = d3.select("#GG");
 var G1 = d3.select("#G1");
 var GG1 = d3.select("#GG1");
-var JJ = {p:0,m:"9J",md:3,m2:"5LK",data:null};
+var JJ = {p:0,m:"9J",md:31,m2:"5LK",data:null};
 var SS = {p:1,m:"5LP",data:null,x:2.0};
 var I1 = 12;
 var I2 = 25;
@@ -1125,7 +1166,63 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
         GG.attr("transform","translate(" + X.toFixed(1) + " 0)");
         GG1.attr("transform","translate(" + X.toFixed(1) + " 0)");
         SS.x = X;
+        if (JJ.data != null) JUMPVIEW(JJ.data,-1);        
+        handle.attr("cx", x(P2X.datum()));
+      }
+
+      var x = d3.scaleLinear()
+          .domain([-2.5, 2.5])
+          .range([0, 540])
+          .clamp(true);
+
+      var slider = STANDX.append("g")
+          .attr("class", "slider")
+          .attr("transform", "translate(" + 50 + "," + 50 / 2 + ")");
+
+      slider.append("line")
+          .attr("class", "track")
+          .attr("x1", x.range()[0])
+          .attr("x2", x.range()[1])
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+          .attr("class", "track-inset")
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+          .attr("class", "track-overlay")
+          .call(d3.drag()
+              .on("start.interrupt", function() { slider.interrupt(); })
+              .on("start drag", function() { hue(x.invert(d3.event.x)); }));
+
+      slider.insert("g", ".track-overlay")
+          .attr("class", "ticks")
+          .attr("transform", "translate(0," + 18 + ")")
+        .selectAll("text")
+        .data(x.ticks(5))
+        .enter().append("text")
+          .attr("x", x)
+          .attr("text-anchor", "middle")
+          .text(function(d) { return d.toFixed(1); });
+
+      var handle = slider.insert("circle", ".track-overlay")
+          .attr("class", "handle")
+          .attr("r", 9);
+
+      slider.transition() // Gratuitous intro!
+          .duration(750)
+          .tween("hue", function() {
+            var i = d3.interpolate(0, 2);
+            return function(t) { hue(i(t)); };
+          });
+
+      function hue(h) {
+        handle.attr("cx", x(h));
+
+        P2X.datum(h.toFixed(2));
+        P2X.text(h.toFixed(2));
+        var X = P2X.datum() - 2.0;
+        GG.attr("transform","translate(" + X.toFixed(2) + " 0)");
+        GG1.attr("transform","translate(" + X.toFixed(2) + " 0)");
+        SS.x = X;
         if (JJ.data != null) JUMPVIEW(JJ.data,-1);
+        //console.log(h);
       }
 
       TB = STANDZIP.select("table").append("tbody");
