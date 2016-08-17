@@ -178,10 +178,10 @@
     background-color: #111;
   }
 
- table.FRAMES tbody tr td:nth-child(3) {
+ table.FRAMES tbody tr td:nth-child(3), table.FRAMES tbody tr td:nth-child(7) {
     color: #9cc;
   }
- table.FRAMES tbody tr td:nth-child(4) {
+ table.FRAMES tbody tr td:nth-child(4), table.FRAMES tbody tr td:nth-child(8) {
     color: #c99;
   }
   table.FRAMES td {
@@ -704,7 +704,7 @@ function JUMPVIEW(d,i) {
       .text(function(d,i){ return d; });
 
   if (i==-1) return;
-  
+
   G.selectAll("*").remove();  
   G1.selectAll("*").remove();
   d.f.map(function(dd){ return JUMPFRAMES[1][dd]; }).forEach(JUMPSTAGE);
