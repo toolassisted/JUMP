@@ -1161,7 +1161,7 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
       var P2X = TR.append("td").text("2.0").attr("id","P2X");
 
       function UCP2X() {
-        P2X.text(P2X.datum().toFixed(1));
+        P2X.text(P2X.datum());
         var X = P2X.datum() - 2.0;
         GG.attr("transform","translate(" + X.toFixed(1) + " 0)");
         GG1.attr("transform","translate(" + X.toFixed(1) + " 0)");
@@ -1170,14 +1170,16 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
         handle.attr("cx", x(P2X.datum()));
       }
 
+
+
       var x = d3.scaleLinear()
           .domain([-2.5, 2.5])
-          .range([0, 540])
+          .range([0, 500])
           .clamp(true);
 
       var slider = STANDX.append("g")
           .attr("class", "slider")
-          .attr("transform", "translate(" + 50 + "," + 50 / 2 + ")");
+          .attr("transform", "translate(" + 70 + "," + 50 / 2 + ")");
 
       slider.append("line")
           .attr("class", "track")
@@ -1224,6 +1226,8 @@ JSZipUtils.getBinaryContent("LOL.zip", function(err, data) {
         if (JJ.data != null) JUMPVIEW(JJ.data,-1);
         //console.log(h);
       }
+
+
 
       TB = STANDZIP.select("table").append("tbody");
 
