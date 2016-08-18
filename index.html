@@ -576,17 +576,18 @@ function FOOTSIE(f1,f2,x1,x2) {
 }
 
 
-function UCJUMPSTAND(jump,start) {
-  if (SS.data == null) return ["","","",""];
+function UCJUMPSTAND(jump,start,stand) {
+  if (jump == null) return ["","","",""];
+  if (stand == null) return ["","","",""];
   // console.log(jump.f[start],SS.data);
 
   var x1=0, x2=SS.x;
   var i=0;
-  for (i=0;i<SS.data.f.length-2;i++) {
+  for (i=0;i<stand.f.length-2;i++) {
 
     if (start+i>=jump.f.length) break;
     var p1 = JUMPFRAMES[1][jump.f[start+i]];
-    var p2 = SS.data.f[i+2];
+    var p2 = stand.f[i+2];
     if (p2.sf>p2.s1) break;
     if (p1.si==0 && p1.sf==0) break;
     if (p1.si==0 && p1.sf==0) break;
@@ -615,7 +616,33 @@ function JUMPROW(d,i) {return [d.p+1,d.m,d.md,d.m2];}
 function STANDROW(d,i) {
   var START = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; })-1;
   var IASA = d.f.findIndex(function(ff,ii){ return ff.sf==ff.s1; })-1;
-  return [d.p+1,d.m, START == -2 ? "-" : START, IASA == -2 ? "-" : IASA];
+
+  var p1 = "";
+  var p12 = "";
+  var p1212 = "";
+  var p2 = "";
+
+  if (JJ.data != null) {
+    p1 = 0;
+    p12 = 0;
+    p2 = 0;    
+    p1212 = 0;
+    JJ.data.f.forEach(function(jd,ji){ 
+      var JS = UCJUMPSTAND(JJ.data,ji,d);
+      if (JS[1] == "1" && JS[2] == "2") { p12++; p1212++; }
+      else if (JS[1] == "1") { p1++; p1212++; }
+      else if (JS[2] == "2") { p2++; p1212++; }
+
+      
+      //console.log(JS);
+    });
+    if (p1 == 0) p1 = "";
+    if (p12 == 0) p12 = "";
+    if (p2 == 0) p2 = "";
+    if (p1212 == 0) p1212 = "";
+  }
+
+  return [d.p+1,d.m, START == -2 ? "-" : START, IASA == -2 ? "-" : IASA, p1212, p12, p1, p2];
 }
 function STANDALLROW(d,i) {
   var START = d.f.findIndex(function(ff,ii){ return ff.c5.length>0; })-1;
@@ -648,7 +675,7 @@ function JUMPJUMPVIEW(d,i) {
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f.map(function(dd){ return JUMPFRAMES[1][dd]; })).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)].concat(UCJUMPSTAND(d,dd.i)); })
+      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)].concat(UCJUMPSTAND(d,dd.i,SS.data)); })
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
@@ -658,6 +685,7 @@ function JUMPJUMPVIEW(d,i) {
   G1.selectAll("*").remove();
   d.f.map(function(dd){ return JUMPFRAMES[1][dd]; }).forEach(JUMPSTAGE);
 
+  UCSTANDBODY();
 
   JUMP.selectAll("*").remove();
   var TABLE = JUMP.append("table").classed("FRAMES",true);
@@ -696,14 +724,18 @@ function JUMPVIEW(d,i) {
   TB.selectAll("tr").remove();
   var TR = TB.selectAll("tr").data(d.f.map(function(dd){ return JUMPFRAMES[1][dd]; })).enter().append("tr").on("mouseenter",JUMPSTAGE1).on("click",JUMPSTAGE1).classed("UC",function(dd,ii){return ii==I1;});
   TR.selectAll("td")
-      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)].concat(UCJUMPSTAND(d,dd.i)); })      
+      .data(function(dd,ii){ return [dd.i-1,JUMPSCRIPTS[1][dd.si].s + " " + (dd.sf+1),dd.x1.toFixed(4),dd.x2.toFixed(4),dd.x3.toFixed(4)].concat(UCJUMPSTAND(d,dd.i,SS.data)); })      
       .enter().append("td")
       .classed("hitbox",function(dd,ii){
         return ii==1 && d3.select(this.parentNode).datum().c5.length>0; 
       })
       .text(function(d,i){ return d; });
 
-  if (i==-1) return;
+  UCSTANDBODY();
+
+  if (i==-1) {
+    return;
+  }
 
   G.selectAll("*").remove();  
   G1.selectAll("*").remove();
@@ -856,6 +888,11 @@ function UCJUMP(data) {
   if (i>=0) JUMPJUMPVIEW(JUMPS[1][i],-1);
 }
 
+function UCSTANDBODY() {
+  var TR = d3.selectAll(".STANDROW");
+  TR.selectAll("td").data(STANDROW).text(function(d,i){ return d; });
+}
+
 function UCSTAND(data) {
   JUMPS[2] = data;
 
@@ -863,11 +900,12 @@ function UCSTAND(data) {
   var THEAD = TABLE.append("thead").append("tr");
   var TB = TABLE.append("tbody");
   var TH = ["SIDE", // "CHAR",
-            "STAND", "START", "IASA" //, "FRAMES"
+            "STAND", "START", "IASA", "T","P12","P1","P2" //, "FRAMES"
             ];
 
   THEAD.selectAll("th").data(TH).enter().append("th").text(function(d,i){return d;});  
   var TR = TB.selectAll("tr").data(JUMPS[2]).enter().append("tr")
+    .classed("STANDROW", true)
     .classed("UC1",function(d){return d.m=="5S" || d.m.endsWith("LP");})
     .classed("UC",function(d){ return d.p == SS.p && d.m == SS.m; })    
     .on("mouseenter",STANDVIEW).on("click",STANDVIEW);
