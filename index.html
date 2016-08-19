@@ -563,8 +563,8 @@ function FOOTSIE(f1,f2,x1,x2) {
       var r1 = {left:b1.rx+x1,top:b1.ry,right:b1.rx+x1+b1.rw,bottom:b1.ry+b1.rh};
       for (var c2=0;c2<f2.c6.length;c2++) {
         var b2 = f2.c6[c2];
-        if ((b1.t == 2 && (b2.t & 4) == 4 && ((f2.c1 & 4) != 4)) || (b1.t == 0 && b2.t != 4
-          
+        if ((b1.t == 2 && (b2.t & 4) == 4 && ((f2.c1 & 4) == 4 && (b1.i & 4) == 0 || (f2.c1 & 4) == 0 && (b1.i & 3) == 0))
+          || (b1.t == 0 && b2.t != 4          
           && (((b1.i & 1) == 0) || ((b1.i & 1) == 1) && ((f2.c1 & 1) != 1))
           && (((b1.i & 2) == 0) || ((b1.i & 2) == 2) && ((f2.c1 & 2) != 2))
           && (((b1.i & 4) == 0) || ((b1.i & 4) == 4) && ((f2.c1 & 4) != 4))
@@ -572,7 +572,7 @@ function FOOTSIE(f1,f2,x1,x2) {
           )) {          
           var r2 = {left:b2.rx+x2,top:b2.ry,right:b2.rx+x2+b2.rw,bottom:b2.ry+b2.rh};
           var hit = !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
-          if (hit) return 1; //b1.t == 2 ? 1000 : b1.s;
+          if (hit) return b1.t == 2 ? 2 : 1; //b1.t == 2 ? 1000 : b1.s;
         }
       }
     }
@@ -603,6 +603,8 @@ function UCJUMPSTAND(jump,start,stand,x2) {
     var r1 = FOOTSIE(p1,p2,x1,x2);
     var r2 = FOOTSIE(p2,p1,x2,x1);
 
+    if (r1 == 2 && r2 != 2) return [p1.sf+1,"1","",(i+1)];
+    if (r1 != 2 && r2 == 2) return [p1.sf+1,"","2",(i+1)];
     if (r1 > 0 || r2 > 0) 
       return [//(start+i-1)
               p1.sf+1,(r1 > 0 ? "1" : ""),(r2 > 0 ? "2" : ""),(i+1)];
@@ -1214,7 +1216,10 @@ function LOADSTANDZIP(dd) {
     dd.data = [];
     var MOVES = [[],[]];
     JSON.parse(data).forEach(function(d,i){
-      if (MOVES[d.p][d.f[3].s] === undefined) {
+      if (MOVES[d.p][d.f[3].s] === undefined || d.m.startsWith("8") || d.m.startsWith("9") || d.m.startsWith("7") ) {
+        if (d.m.startsWith("85T") || d.m.startsWith("95T") || d.m.startsWith("84T") || d.m.startsWith("94T")) {
+          if (d.f[8].s.indexOf("LK") > -1) return;
+        }
         MOVES[d.p][d.f[3].s] = 1;
         if (d.p==1) {
           d.f.forEach(function(f){
